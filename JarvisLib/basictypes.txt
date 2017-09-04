@@ -1,0 +1,35 @@
+
+!mute
+
+#HERITAGE: il manque la classe Object.
+()
+[]
+!(Class new)
+!ref object
+
+
+#MUTATEUR: c'est une fonctionnalite 
+#de base de tous les objets...
+
+
+
+#Classe servant a faire des conditions
+("true" "false")
+[]
+
+!(Class new)
+!ref ifelse
+
+#OPERATIONSPRIMITIVES
+#definition incomplete de la classe int.
+("value")
+["+" _integerAddPrimitive "-" _integerSubtractPrimitive "*" _integerMultiplyPrimitive "==" _integerEqualsPrimitive "<" _integerLessThanPrimitive ">" _integerGreaterThanPrimitive]
+!(Class new)
+!ref int
+
+#OPERATIONSPRIMITIVES
+#definition incompl�te de la classe bool.
+("value")
+["&&" _boolAndPrimitive "||" _boolOrPrimitive "!" _boolNotPrimitive]
+!(Class new)
+!ref bool
