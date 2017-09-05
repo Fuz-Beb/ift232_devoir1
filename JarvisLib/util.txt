@@ -9,7 +9,7 @@
 }
 !ref pint
 
-#Fonction qui imprime la valeur d'un objet de type booléen
+#Fonction qui imprime la valeur d'un objet de type boolï¿½en
 !{ tv .
 	
 	!(tv value)
@@ -19,5 +19,30 @@
 !ref pbool
 
 
+
+!{. absolu } 
+!ref abPos 
+
+
+!{. !(int new 0) 
+!(!a - absolu)} 
+!ref absNeg
+
+
+#Fonction qui calcule la valeur absolu
+!(ifelse new abPos absNeg)
+				
+!ref absoluCalculate
+
+#Fonction qui retourne une valeur absolu
+!{ absolu .
+	!(absolu > 0)
+	!ref posOrNeg
+	
+	!(posOrNeg value)
+	!ref isAbsolute
+	!(absoluCalculate isAbsolute)
+}
+!ref absolu
 
 !unmute

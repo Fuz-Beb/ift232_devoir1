@@ -23,18 +23,18 @@
 !ref calcCondition
 
 #Fonction qui fait un test et utilise calcCondition pour faire le calcul selon
-#le résultat de la condition
+#le rï¿½sultat de la condition
 !{ x y .
 	
-	#Test. Retourne un objet booléen
+	#Test. Retourne un objet boolï¿½en
 	!(x == y)
 	!ref resultatTest
 	
-	#Récupère l'atome booléen du résultat (donc vrai ou faux)
+	#Rï¿½cupï¿½re l'atome boolï¿½en du rï¿½sultat (donc vrai ou faux)
 	!(resultatTest value)
 	!ref vraifaux		
 	#Va chercher le membre vrai ou le membre faux selon
-	#la valeur de l'atome booléen (il sert de sélecteur).
+	#la valeur de l'atome boolï¿½en (il sert de sï¿½lecteur).
 	!(calcCondition vraifaux)
 }
 !ref SommeOuDifference
