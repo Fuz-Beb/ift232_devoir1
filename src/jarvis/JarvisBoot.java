@@ -11,23 +11,23 @@ import java.io.InputStreamReader;
 /*
  * Bienvenue dans Jarvis!
  * Ne regardez pas trop cette classe, ce n'est qu'un
- * petit démarrage pour l'interpréteur.
- * Si vous voulez le forcer à charger un fichier en particulier
- * vous pouvez le faire via les arguments à l'exécution:
+ * petit dï¿½marrage pour l'interprï¿½teur.
+ * Si vous voulez le forcer ï¿½ charger un fichier en particulier
+ * vous pouvez le faire via les arguments ï¿½ l'exï¿½cution:
  * Run->configurations, onglet arguments, entrez le nom du fichier
- * à cet endroit.
+ * ï¿½ cet endroit.
  * 
- * Pour retrouver les sections de code à modifier par thème,
+ * Pour retrouver les sections de code ï¿½ modifier par thï¿½me,
  * double-cliquez sur les mots suivants et cherchez-les dans
- * votre espace de travail à l'aide de CTRL-ALT-G.
+ * votre espace de travail ï¿½ l'aide de CTRL-ALT-G.
  * OPERATIONSPRIMITIVES
  * RECTANGLE
- * HÉRITAGE
+ * Hï¿½RITAGE
  * MUTATEUR
  * VARIABLESCLASSE 
  * 
  * Pour comprendre un peu mieux le fonctionnement
- * de Jarvis, vous pouvez chercher le thème suivant:
+ * de Jarvis, vous pouvez chercher le thï¿½me suivant:
  * SOUSLECAPOT
  * 
  */

@@ -18,20 +18,22 @@
 }
 !ref pbool
 
+# Fonction qui transforme un nombre positif en négatif
+!{.
+	!(int new 0) 
+	!(!a - absolu)
+} 
+	!ref absNeg
 
 
-!{. absolu } 
-!ref abPos 
+# Fonction qui retourne le nombre positif passé en paramètre
+!{.
+	absolu 
+} 
+	!ref abPos 
 
-
-!{. !(int new 0) 
-!(!a - absolu)} 
-!ref absNeg
-
-
-#Fonction qui calcule la valeur absolu
+# Condition if / else qui appelle la fonction abPos ou absNeg en fonction du signe du nombre
 !(ifelse new abPos absNeg)
-				
 !ref absoluCalculate
 
 #Fonction qui retourne une valeur absolu
