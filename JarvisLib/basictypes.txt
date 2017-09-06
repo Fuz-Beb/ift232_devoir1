@@ -2,10 +2,11 @@
 !mute
 
 #HERITAGE: il manque la classe Object.
-()
+("value")
 []
+null
 !(Class new)
-!ref object
+!ref Object
 
 
 #MUTATEUR: c'est une fonctionnalite 
@@ -16,7 +17,7 @@
 #Classe servant a faire des conditions
 ("true" "false")
 []
-
+Object
 !(Class new)
 !ref ifelse
 
@@ -24,6 +25,7 @@
 #definition incomplete de la classe int.
 ("value")
 ["+" _integerAddPrimitive "-" _integerSubtractPrimitive "*" _integerMultiplyPrimitive "==" _integerEqualsPrimitive "<" _integerLessThanPrimitive ">" _integerGreaterThanPrimitive]
+Object
 !(Class new)
 !ref int
 
@@ -31,5 +33,6 @@
 #definition incompl�te de la classe bool.
 ("value")
 ["&&" _boolAndPrimitive "||" _boolOrPrimitive "!" _boolNotPrimitive]
+Object
 !(Class new)
 !ref bool

@@ -170,6 +170,7 @@ public class JarvisInterpreter {
 		ListAtom members = new ListAtom();
 		members.add(new StringAtom("attributes"));
 		members.add(new StringAtom("methods"));
+		members.add(new StringAtom("superClass"));
 
 		HashMap<String, AbstractAtom> m = new HashMap<String, AbstractAtom>();
 		DictionnaryAtom methods = new DictionnaryAtom(m);

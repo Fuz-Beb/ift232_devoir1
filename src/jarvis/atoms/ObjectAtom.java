@@ -6,143 +6,175 @@ import java.util.ArrayList;
 
 /*
  * Cette classe implante l'objet de base.
- * L'interpréteur comprend un objet comme
+ * L'interprï¿½teur comprend un objet comme
  * une simple liste de valeurs.
- * L'organisation de ses données est spécifiée
- * par la classe. Celle-ci peut être retrouvée
+ * L'organisation de ses donnï¿½es est spï¿½cifiï¿½e
+ * par la classe. Celle-ci peut ï¿½tre retrouvï¿½e
  * via le lien classReference.
  */
 public class ObjectAtom extends AbstractAtom {
 
 	/*
-	 * Si vous ajoutez des champs à JarvisClass
-	 * ces constantes doivent le refléter.
-	 * Elles sont utilisées pour retrouver
-	 * les membres d'une classe.
+	 * Si vous ajoutez des champs ï¿½ JarvisClass ces constantes doivent le
+	 * reflï¿½ter. Elles sont utilisï¿½es pour retrouver les membres d'une classe.
 	 * 
 	 */
-	public static final int ATTRIBUTE_FIELD =0;
-	public static final int METHOD_FIELD =1;
-	
+	public static final int ATTRIBUTE_FIELD = 0;
+	public static final int METHOD_FIELD = 1;
+	public static final int SUPER_FIELD = 2;
+
 	/*
-	 * Référence à la classe de cet objet.
+	 * RÃ©fÃ©rence Ã  la classe de cet objet.
 	 */
 	private ObjectAtom classReference;
+	private ObjectAtom superClassReference;
 	private ArrayList<AbstractAtom> values;
-	
-	//Référence utile pour faire des reverse lookup
+
+	// RÃ©fÃ©rence utile pour faire des reverse lookup
 	private JarvisInterpreter ji;
 
-	// Constructeur d'objet générique
-	// Utilisé comme raccourci par les fonctions tricheuses.
-	public ObjectAtom(ObjectAtom theClass, ArrayList<AbstractAtom> vals,JarvisInterpreter ji) {
+	// Constructeur d'objet gÃ©nÃ©rique
+	// UtilisÃ© comme raccourci par les fonctions tricheuses.
+	public ObjectAtom(ObjectAtom theClass, ArrayList<AbstractAtom> vals, JarvisInterpreter ji) {
 
 		classReference = theClass;
+		ObjectAtom superClass = null;
+
+		for (int i = 0; i < vals.size(); i++) {
+			if (vals.get(i) instanceof ObjectAtom) {
+				superClass = (ObjectAtom) vals.get(i);
+			}
+		}
+		superClassReference = superClass;
 
 		values = new ArrayList<AbstractAtom>();
 		values.addAll(vals);
-		
-		this.ji=ji;
+
+		this.ji = ji;
 	}
-	
+
 	@Override
-	public AbstractAtom interpretNoPut(JarvisInterpreter ji) {	
+	public AbstractAtom interpretNoPut(JarvisInterpreter ji) {
 		return this;
 	}
 
 	public ObjectAtom getJarvisClass() {
 		return classReference;
 	}
-	
-	
-	//Cas spécial où le selecteur n'est pas encore encapsulé dans un atome
-	//Supporté pour alléger la syntaxe.
+
+	// Cas spï¿½cial oï¿½ le selecteur n'est pas encore encapsulï¿½ dans un atome
+	// Supportï¿½ pour allï¿½ger la syntaxe.
 	public AbstractAtom message(String selector) {
-		
+
 		return message(new StringAtom(selector));
-		
+
 	}
-	
-    //HÉRITAGE
-	//VARIABLESCLASSE
+
+	// HÃ©RITAGE
+	// VARIABLESCLASSE
 	/*
-	 * Algorithme de gestion des messages.
-	 * Ce bout de code a pour responsabilité de déterminer si le message
-	 * concerne un attribut ou une méthode. 
-	 * Pour implanter l'héritage, cet algorithme doit nécessairement être modifié.
-	 */	
+	 * Algorithme de gestion des messages. Ce bout de code a pour responsabilitï¿½
+	 * de dï¿½terminer si le message concerne un attribut ou une mï¿½thode. Pour
+	 * implanter l'hï¿½ritage, cet algorithme doit nï¿½cessairement ï¿½tre modifiï¿½.
+	 */
 	public AbstractAtom message(AbstractAtom selector) {
-		
-		
-		//Va chercher les attributs
+
+		// Va chercher les attributs
 		ListAtom members = (ListAtom) classReference.values.get(ATTRIBUTE_FIELD);
 
-		//Vérifie si c'est un attribut 
+		// VÃ©rifie si c'est un attribut
 		int pos = members.find(selector);
-		
-		
+
 		if (pos == -1) {
 			// pas un attribut...
-			// Va chercher les méthodes
-			DictionnaryAtom methods = (DictionnaryAtom) classReference.values
-					.get(METHOD_FIELD);
+			DictionnaryAtom methods = (DictionnaryAtom) classReference.values.get(METHOD_FIELD);
 
-			// Cherche dans le dictionnaire
-			AbstractAtom res = methods.get(selector.makeKey());
-
+			AbstractAtom res = getMethod(selector.makeKey(), true);
 			if (res == null) {
-				
+
 				// Rien ne correspond au message
-				return new StringAtom("ComprendPas "+ selector);
+				return new StringAtom("ComprendPas " + selector);
 			} else {
-				//C'est une méthode.
+				// C'est une mÃ©thode.
 				return res;
 			}
 
 		}
 
 		else {
-			//C'est un attribut.
+			// C'est un attribut.
 			return values.get(pos);
 		}
+	}
+
+	private AbstractAtom getMethod(String key, AbstractAtom selector) {
+		DictionnaryAtom methods = (DictionnaryAtom) classReference.values.get(METHOD_FIELD);
+
+		AbstractAtom res = methods.get(selector.makeKey());
+		ArrayList<AbstractAtom> valuesLocal;
+
+		if (res == null) {
+			valuesLocal = classReference.values;
+		}
+
+		return res;
 	}
 
 	public void setClass(ObjectAtom theClass) {
 		classReference = theClass;
 	}
 
-	
-	
-	//Surtout utile pour l'affichage dans ce cas-ci...
+	// Surtout utile pour l'affichage dans ce cas-ci...
 	@Override
 	public String makeKey() {
-		String s="";
-		int i=0;
-		
-		s += "\""+ji.getEnvironment().reverseLookup(classReference)+"\":";
-		
+		String s = "";
+		int i = 0;
+
+		s += "\"" + ji.getEnvironment().reverseLookup(classReference) + "\":";
+
 		for (AbstractAtom atom : values) {
-			
-			s+=" "+((ListAtom)classReference.values.get(0)).get(i).makeKey()+":";
-			if(atom instanceof ClosureAtom)
-			{
-				s+=atom;
+
+			s += " " + ((ListAtom) classReference.values.get(0)).get(i).makeKey() + ":";
+			if (atom instanceof ClosureAtom) {
+				s += atom;
+			} else {
+				s += atom.makeKey();
 			}
-			else
-			{
-				s+=atom.makeKey();
-			}
-			
+
 			i++;
 		}
-		
+
 		return s;
-	}	
-	
-	public String findClassName(JarvisInterpreter ji){
-		
-		return ji.getEnvironment().reverseLookup(classReference);
-		
 	}
 
+	public String findClassName(JarvisInterpreter ji) {
+
+		return ji.getEnvironment().reverseLookup(classReference);
+	}
+
+	private AbstractAtom getMethod(String key, boolean wasCalledFromChildClass) {
+
+		DictionnaryAtom methods;
+		ArrayList<AbstractAtom> localValues;
+		if (wasCalledFromChildClass) {
+			localValues = classReference.values;
+		} else {
+			localValues = values;
+		}
+
+		methods = (DictionnaryAtom) localValues.get(METHOD_FIELD);
+		AbstractAtom res = methods.get(key);
+		if (res == null) {
+			ObjectAtom superClass;
+			if (wasCalledFromChildClass) {
+				superClass = classReference.superClassReference;
+			} else {
+				superClass = superClassReference;
+			}
+			if (superClass != null) {
+				res = superClass.getMethod(key, false);
+			}
+		}
+		return res;
+	}
 }
