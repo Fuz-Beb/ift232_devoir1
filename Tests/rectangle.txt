@@ -53,6 +53,7 @@
 	["hauteur" fonctionHauteur "largeur" fonctionLargeur "perimetre" fonctionPerimetre]
 	
 	#D�finition de la classe
+	Object
 	!(Class new)	
 }
 #interpr�te la fonction qu'on vient de cr�er.

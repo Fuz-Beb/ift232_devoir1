@@ -21,15 +21,18 @@ public class ObjectAtom extends AbstractAtom {
 	 */
 	public static final int ATTRIBUTE_FIELD = 0;
 	public static final int METHOD_FIELD = 1;
-	public static final int SUPER_FIELD = 2;
 
 	/*
 	 * Référence à la classe de cet objet.
 	 */
 	private ObjectAtom classReference;
-	private ObjectAtom superClassReference;
 	private ArrayList<AbstractAtom> values;
-
+	
+	/*
+	 * Référence à sa super classe
+	 */
+	private ObjectAtom superclassReference;
+	
 	// Référence utile pour faire des reverse lookup
 	private JarvisInterpreter ji;
 
@@ -38,15 +41,14 @@ public class ObjectAtom extends AbstractAtom {
 	public ObjectAtom(ObjectAtom theClass, ArrayList<AbstractAtom> vals, JarvisInterpreter ji) {
 
 		classReference = theClass;
-		ObjectAtom superClass = null;
 
+		// Garde une référence du dernier ObjectAtom présent dans le tableau "vals" 
 		for (int i = 0; i < vals.size(); i++) {
 			if (vals.get(i) instanceof ObjectAtom) {
-				superClass = (ObjectAtom) vals.get(i);
+			    superclassReference = (ObjectAtom) vals.get(i);
 			}
 		}
-		superClassReference = superClass;
-
+		
 		values = new ArrayList<AbstractAtom>();
 		values.addAll(vals);
 
@@ -89,35 +91,22 @@ public class ObjectAtom extends AbstractAtom {
 			// pas un attribut...
 			DictionnaryAtom methods = (DictionnaryAtom) classReference.values.get(METHOD_FIELD);
 
+			// Cherche dans le dictionnaire de la classe parente
 			AbstractAtom res = getMethod(selector.makeKey(), true);
+			
 			if (res == null) {
-
 				// Rien ne correspond au message
 				return new StringAtom("ComprendPas " + selector);
 			} else {
 				// C'est une méthode.
 				return res;
 			}
-
 		}
 
 		else {
 			// C'est un attribut.
 			return values.get(pos);
 		}
-	}
-
-	private AbstractAtom getMethod(String key, AbstractAtom selector) {
-		DictionnaryAtom methods = (DictionnaryAtom) classReference.values.get(METHOD_FIELD);
-
-		AbstractAtom res = methods.get(selector.makeKey());
-		ArrayList<AbstractAtom> valuesLocal;
-
-		if (res == null) {
-			valuesLocal = classReference.values;
-		}
-
-		return res;
 	}
 
 	public void setClass(ObjectAtom theClass) {
@@ -152,27 +141,33 @@ public class ObjectAtom extends AbstractAtom {
 		return ji.getEnvironment().reverseLookup(classReference);
 	}
 
-	private AbstractAtom getMethod(String key, boolean wasCalledFromChildClass) {
+	// Parcours via récursivité les méthodes de chacune des classes présentes dans la chaine d'héritage
+	private AbstractAtom getMethod(String key, boolean childClass) {
 
-		DictionnaryAtom methods;
-		ArrayList<AbstractAtom> localValues;
-		if (wasCalledFromChildClass) {
-			localValues = classReference.values;
+		DictionnaryAtom methods = null;		
+		ObjectAtom superclass = null;
+		AbstractAtom res = null;
+		
+		// Récupération de la liste des méthodes
+		if (childClass) {
+			methods = (DictionnaryAtom) classReference.values.get(METHOD_FIELD);
 		} else {
-			localValues = values;
+			methods = (DictionnaryAtom) values.get(METHOD_FIELD);
 		}
-
-		methods = (DictionnaryAtom) localValues.get(METHOD_FIELD);
-		AbstractAtom res = methods.get(key);
+		
+		res = methods.get(key);
+		
+		// Si la méthode n'existe pas, parcours des classes supérieur dans la chaine d'héritage
 		if (res == null) {
-			ObjectAtom superClass;
-			if (wasCalledFromChildClass) {
-				superClass = classReference.superClassReference;
+			if (childClass) {
+				superclass = classReference.superclassReference;
 			} else {
-				superClass = superClassReference;
+				superclass = superclassReference;
 			}
-			if (superClass != null) {
-				res = superClass.getMethod(key, false);
+			
+			// Récursivité - La classe parente n'a pas été atteinte. Il y a donc d'autre classe à parcourir
+			if (superclass != null) {
+				res = superclass.getMethod(key, false);
 			}
 		}
 		return res;
